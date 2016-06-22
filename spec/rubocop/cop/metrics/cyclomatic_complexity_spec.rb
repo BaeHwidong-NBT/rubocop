@@ -29,6 +29,26 @@ describe RuboCop::Cop::Metrics::CyclomaticComplexity, :config do
       expect(cop.offenses).to be_empty
     end
 
+    it 'accepts early returns' do
+      inspect_source(cop,
+                     ['def method_name',
+                      '  return if first_condition',
+                      '  return if second_condition',
+                      '  call_foo',
+                      'end'])
+      expect(cop.offenses).to be_empty
+    end
+
+    it 'accepts explicit returns' do
+      inspect_source(cop,
+                     ['def method_name',
+                      '  return if first_condition',
+                      '  return if second_condition',
+                      '  return call_foo',
+                      'end'])
+      expect(cop.offenses).to be_empty
+    end
+
     it 'registers an offense for an if modifier' do
       inspect_source(cop, ['def self.method_name',
                            '  call_foo if some_condition',
